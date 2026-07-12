@@ -19,10 +19,11 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  documents     Document[] @relation("OwnerDocuments")
+  documents      Document[]     @relation("OwnerDocuments")
   collaborations Collaborator[]
-  versions      Version[]
+  versions       Version[]
 }
 
 model Document {
@@ -33,34 +34,34 @@ model Document {
   updatedAt DateTime @updatedAt
 
   ownerId String
-  owner   User @relation("OwnerDocuments", fields: [ownerId], references: [id])
+  owner   User   @relation("OwnerDocuments", fields: [ownerId], references: [id])
 
   collaborators Collaborator[]
   versions      Version[]
 }
 
 model Collaborator {
-  id         String @id @default(cuid())
+  id String @id @default(cuid())
 
   userId     String
   documentId String
 
   role Role
 
-  user User @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
   document Document @relation(fields: [documentId], references: [id])
 
   @@unique([userId, documentId])
 }
 
 model Version {
-  id         String   @id @default(cuid())
-  content    String   @db.Text
-  createdAt  DateTime @default(now())
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
 
   documentId String
   userId     String
 
   document Document @relation(fields: [documentId], references: [id])
-  user User @relation(fields: [userId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
 }
