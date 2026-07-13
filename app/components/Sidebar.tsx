@@ -23,6 +23,7 @@ export default function Sidebar() {
         <Link href="/register" className="block hover:text-blue-400">
           Register
         </Link>
+        
       </nav>
     </aside>
   );
