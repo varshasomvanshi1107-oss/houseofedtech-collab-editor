@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-
     const { name, email, password } = body;
 
     if (!name || !email || !password) {
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (existingUser) {
       return NextResponse.json(
         { message: "User already exists" },
-        { status: 400 }
+        { status: 409 }
       );
     }
 
@@ -37,27 +36,30 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
       },
     });
-return NextResponse.json(
-  {
-    message: "User registered successfully",
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-    },
-  },
-  { status: 201 }
-);
-  } catch (error: any) {
-  console.error("REGISTER ERROR:", error);
 
-  return NextResponse.json(
-    {
-      message: error.message,
-    },
-    {
-      status: 500,
-    }
-  );
+    return NextResponse.json(
+      {
+        message: "User registered successfully",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+      },
+      {
+        status: 201,
+      }
+    );
+  } catch (error: any) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        message: error.message,
+      },
+      {
+        status: 500,
+      }
+    );
   }
-  }
+}
