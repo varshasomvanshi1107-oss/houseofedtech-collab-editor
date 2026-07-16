@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function EditorPage() {
+function EditorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -12,7 +12,6 @@ export default function EditorPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  // Existing document load
   useEffect(() => {
     if (id) {
       fetch(`/api/documents/${id}`)
@@ -26,7 +25,6 @@ export default function EditorPage() {
     }
   }, [id]);
 
-  // Save or Update
   const saveDocument = async () => {
     if (!title.trim()) {
       alert("Please enter document title");
@@ -51,7 +49,6 @@ export default function EditorPage() {
 
       const data = await response.json();
 
-      // New document created
       if (!id) {
         router.push(`/editor?id=${data.id}`);
       }
@@ -66,7 +63,6 @@ export default function EditorPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-5xl mx-auto bg-white rounded-lg shadow-lg p-6">
-
         <h1 className="text-3xl font-bold mb-6">
           Collaborative Editor
         </h1>
@@ -98,8 +94,15 @@ export default function EditorPage() {
             {id ? "Update Document" : "Save Document"}
           </button>
         </div>
-
       </div>
     </div>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading...</div>}>
+      <EditorContent />
+    </Suspense>
   );
 }
